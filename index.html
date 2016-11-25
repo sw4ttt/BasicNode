@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"> 
+    <title>Socket.IO chat</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+        
+        <div class="container">
+            <h2>Chat</h2>
+            <div class="panel panel-default">
+                <div class="panel-heading">Main Room - Users: <span class="badge" id="usersCount">0</span></div>
+                <div class="panel-body">
+                    
+                    <form>
+                        <div class="form-group">
+                            
+                            <div class="col-xs-12">
+                                <!-- <ul id="messages"></ul>-->
+                                <textarea readonly class="form-control" rows="20" id="messages" style="background-color:#ffffff;"></textarea>
+                            </div>
+                            <div class="col-xs-12">
+                                <span id="typping" class="help-block">User typping.</span>
+                            </div>
+                            <div class="col-xs-10">                                
+                                <input type="text" class="form-control" id="m">
+                            </div>
+                            <div class="col-xs-2">
+                                <button type="submit" class="btn btn-default">Send</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+        <script>
+            var socket = io();
+            $('form').submit(function()
+            {
+                if($('#m').val()) 
+                {
+                    socket.emit('chat message', {msg:$('#m').val(),room:'001'});
+                    //socket.broadcast.emit('chat message', "this is a test");
+                    //io.to('001').emit('chat message', $('#m').val());
+                    //io.to('chat message').emit('some event');
+                    //socket.to('001').emit('chat message',$('#m').val());
+                    $('#m').val('');
+                    $('#typping').text("User typping.");                    
+                }
+                return false;
+            });
+            socket.on('chat message', function(msg){
+                $('#messages').append(msg.concat("\n"));
+            });
+            socket.on('user connected', function(msg){
+                $('#messages').append(msg.concat("\n"));
+                var usersCount = parseInt($('#usersCount').text());
+                $('#usersCount').text((usersCount+1).toString());
+            });
+            socket.on('user disconnect', function(msg){
+                $('#messages').append(msg.concat("\n"));
+                var usersCount = parseInt($('#usersCount').text());
+                $('#usersCount').text((usersCount-1).toString());
+            });
+            socket.on('user typped', function(msg){
+                $('#typping').append("Typping. ");
+            });
+            socket.on('users', function(msg){
+                var usersCount = parseInt($('#usersCount').text());
+                $('#usersCount').text((msg).toString());
+            });
+        </script>
+        <script>
+            $('#m').keyup(function()
+            {
+                socket.emit('user typped', "user typped");
+            });
+        </script>
+  </body>
+</html>
