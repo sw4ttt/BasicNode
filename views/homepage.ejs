@@ -22,9 +22,6 @@
                                   </div>
                                   <div class="col-xs-4" style="overflow:auto; height:415px; padding-left: 0px; border: 1px solid lightgray; border-radius: 5px;" >
                                       <ul id="usersList" class="list-group">
-                                          <li class="list-group-item">First item</li>
-                                          <li class="list-group-item">Second item</li>
-                                          <li class="list-group-item">Third item</li>
                                       </ul>
                                   </div>
                               </div>
@@ -35,7 +32,7 @@
                               </div>
                               <div class="row"> 
                                   <div class="col-xs-8">                                
-                                      <input type="text" class="form-control" id="m" value='message'>
+                                      <input type="text" class="form-control" id="m" placeholder="message">
                                   </div>
                                   <div class="col-xs-4">
                                       <button type="submit" class="btn btn-default">Send</button>
@@ -54,7 +51,7 @@
     
                   if($('#m').val()) 
                   {
-                      io.socket.get('/comment', function gotResponse(data, jwRes) 
+                      io.socket.get('/comment', {msg: $('#m').val()},function gotResponse(data, jwRes) 
                       {
                           console.log('GET /comment/say Server: DATA:'+data.exit+', StatusCode: '+jwRes.statusCode);
                       });
@@ -63,7 +60,7 @@
                       //io.to('001').emit('chat message', $('#m').val());
                       //io.to('chat message').emit('some event');
                       //socket.to('001').emit('chat message',$('#m').val());
-                      //$('#m').val('');
+                      $('#m').val('');
                       //$('#typping').text("User typping.");                    
                   }
                   return false;
@@ -77,9 +74,15 @@
                   {
                         console.log('GET /join Server: DATA:'+data.exit+', StatusCode: '+jwRes.statusCode);
                   });
-                  io.socket.on('hello', function (data)
+                  io.socket.on('chat', function (data)
                   {
+                      $('#messages').append(data.msg+"\n");
                       console.log('Event: comment => '+data.msg);
+                      //console.log('Event: comment');
+                  });
+                  io.socket.on('join', function (data)
+                  {
+                      $('#usersList').append('<li class="list-group-item">'+data.name+'</li>');
                       //console.log('Event: comment');
                   });
               });

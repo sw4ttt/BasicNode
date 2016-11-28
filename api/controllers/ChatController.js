@@ -20,6 +20,8 @@ module.exports = {
       {
           return res.badRequest();
       }
+
+      console.log(req.param('msg'));
       // Broadcast a notification to all the sockets who have joined
       // the "room001" room, excluding our newly added socket:
       
@@ -39,12 +41,12 @@ module.exports = {
       });
       */
 
-      sails.sockets.broadcast('room001', 'hello', {from: 'user', msg: 'Hi! broadcast!!!'},req);
+      sails.sockets.broadcast('room001', 'chat', {from: sails.sockets.getId(req), msg: req.param('msg')});
 
       sails.io.sockets.in('room001').clients(function(error, clients) 
       {
           if (error) throw error;
-          console.log(clients); // => [PZDoMHjiu8PYfRiKAAAF, Anw2LatarvGVVXEIAAAD]
+          //console.log(clients); // => [PZDoMHjiu8PYfRiKAAAF, Anw2LatarvGVVXEIAAAD]
       });
 
       //sails.sockets.blast('hello', {from: sails.sockets.getId(req), msg: 'Hi! blast'});
@@ -73,6 +75,7 @@ module.exports = {
           if (err) {
               return res.serverError(err);
           }
+          sails.sockets.broadcast('room001', 'join', {name: sails.sockets.getId(req)});
           console.log('Joined Room= room001, with id='+sails.sockets.getId(req));
       });
       return res.json({

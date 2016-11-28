@@ -1,3 +1,3 @@
-# sailschatv2
+# SailsChat
 
 a [Sails](http://sailsjs.org) application
