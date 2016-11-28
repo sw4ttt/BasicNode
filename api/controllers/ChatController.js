@@ -39,7 +39,7 @@ module.exports = {
       });
       */
 
-      sails.sockets.broadcast('room001', 'hello', {from: 'user', msg: 'Hi! broadcast!'},req);
+      sails.sockets.broadcast('room001', 'hello', {from: 'user', msg: 'Hi! broadcast!!!'},req);
 
       sails.io.sockets.in('room001').clients(function(error, clients) 
       {
