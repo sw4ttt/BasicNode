@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Sails Chat V2</title>
+        <meta charset="utf-8"> 
+        <title>Sails Socket.IO chat</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    </head>
+    <body>        
+          <div class="container">
+              <h2>Chat</h2>
+              <div class="panel panel-default">
+                  <div class="panel-heading">Main Room - Users: <span class="badge" id="usersCount">0</span></div>
+                  <div class="panel-body" >                    
+                      <form>
+                          <div class="form-group">
+                              <div class="row">
+                                  <div class="col-xs-8">
+                                      <textarea readonly class="form-control" rows="20" id="messages" style="background-color:#ffffff; padding-left: 0px;"></textarea>
+                                  </div>
+                                  <div class="col-xs-4" style="overflow:auto; height:415px; padding-left: 0px; border: 1px solid lightgray; border-radius: 5px;" >
+                                      <ul id="usersList" class="list-group">
+                                          <li class="list-group-item">First item</li>
+                                          <li class="list-group-item">Second item</li>
+                                          <li class="list-group-item">Third item</li>
+                                      </ul>
+                                  </div>
+                              </div>
+                              <div class="row"> 
+                                  <div class="col-xs-12">
+                                      <span id="typping" class="help-block">User typping.</span>
+                                  </div>
+                              </div>
+                              <div class="row"> 
+                                  <div class="col-xs-8">                                
+                                      <input type="text" class="form-control" id="m" value='message'>
+                                  </div>
+                                  <div class="col-xs-4">
+                                      <button type="submit" class="btn btn-default">Send</button>
+                                  </div>
+                              </div>
+                          </div>
+                      </form>
+                  </div>
+              </div>
+          </div>
+          <script type"text/javascript" src="/js/dependencies/sails.io.js"></script>
+          <script type"text/javascript">
+              // The auto-connecting socket is exposed as `io.socket`.
+              $('form').submit(function()
+              {
+    
+                  if($('#m').val()) 
+                  {
+                      io.socket.get('/comment', function gotResponse(data, jwRes) 
+                      {
+                          console.log('GET /comment/say Server: DATA:'+data.exit+', StatusCode: '+jwRes.statusCode);
+                      });
+                      //socket.emit('chat message', {msg:$('#m').val(),room:'001'});
+                      //socket.broadcast.emit('chat message', "this is a test");
+                      //io.to('001').emit('chat message', $('#m').val());
+                      //io.to('chat message').emit('some event');
+                      //socket.to('001').emit('chat message',$('#m').val());
+                      //$('#m').val('');
+                      //$('#typping').text("User typping.");                    
+                  }
+                  return false;
+              });
+          </script>
+          <script type"text/javascript">
+              io.socket.on('connect', function()
+              {
+                  console.log('conectado.');
+                  io.socket.get('/join', function gotResponse(data, jwRes) 
+                  {
+                        console.log('GET /join Server: DATA:'+data.exit+', StatusCode: '+jwRes.statusCode);
+                  });
+                  io.socket.on('hello', function (data)
+                  {
+                      console.log('Event: comment => '+data.msg);
+                      //console.log('Event: comment');
+                  });
+              });
+          </script>
+          <script>
+          /*
+              var socket = io();
+              $('form').submit(function()
+              {
+                  if($('#m').val()) 
+                  {
+                      socket.emit('chat message', {msg:$('#m').val(),room:'001'});
+                      //socket.broadcast.emit('chat message', "this is a test");
+                      //io.to('001').emit('chat message', $('#m').val());
+                      //io.to('chat message').emit('some event');
+                      //socket.to('001').emit('chat message',$('#m').val());
+                      $('#m').val('');
+                      $('#typping').text("User typping.");                    
+                  }
+                  return false;
+              });
+              socket.on('chat message', function(msg){
+                  $('#messages').append(msg.concat("\n"));
+              });
+              socket.on('user connected', function(msg){
+                  $('#messages').append(msg.concat("\n"));
+                  var usersCount = parseInt($('#usersCount').text());
+                  $('#usersCount').text((usersCount+1).toString());
+              });
+              socket.on('user disconnect', function(msg){
+                  $('#messages').append(msg.concat("\n"));
+                  var usersCount = parseInt($('#usersCount').text());
+                  $('#usersCount').text((usersCount-1).toString());
+              });
+              socket.on('user typped', function(msg){
+                  $('#typping').append("Typping. ");
+              });
+              socket.on('users', function(msg){
+                  var usersCount = parseInt($('#usersCount').text());
+                  $('#usersCount').text((msg).toString());
+              });
+          */
+          </script>
+          <script>
+          /*
+              $('#m').keyup(function()
+              {
+                  socket.emit('user typped', "user typped");
+              });
+          */
+          </script>
+    </body>
+</html>
