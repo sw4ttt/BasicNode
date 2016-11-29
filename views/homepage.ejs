@@ -4,8 +4,8 @@
         <title>Sails Chat V2</title>
         <meta charset="utf-8"> 
         <title>Sails Socket.IO chat</title>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">        
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     </head>
     <body>        
@@ -17,22 +17,22 @@
                       <form>
                           <div class="form-group">
                               <div class="row">
-                                  <div class="col-xs-7 chatbox">
+                                  <div class="col-xs-8 chatbox">
                                     <div class="message-box">
                                         <p id="chat-username">Say</p>
                                         <p id="chat-msg">Something!</p>
                                     </div>
                                   </div>
-                                  <div class="col-xs-5" >
+                                  <div class="col-xs-4" >
                                     <div class="usersList">
                                     </div>
                                   </div>
                               </div>
                               <div class="row"> 
-                                  <div class="col-xs-7 ">                                
+                                  <div class="col-xs-8 ">                                
                                       <input type="text" class="form-control inputbox" id="m" placeholder="message" autocomplete="off">
                                   </div>
-                                  <div class="col-xs-5 sendbox pull-right">
+                                  <div class="col-xs-4 sendbox">
                                       <button type="submit" class="btn btn-default">Send</button>
                                   </div>
                               </div>
@@ -73,26 +73,41 @@
                         for (i = 0; i < data.users.length; i++)
                         {
                             //$('#usersList').append('<li class="list-group-item">'+data.users[i]+'</li>'); 
-                            $('.usersList').append('<p class="userItem"><span class="glyphicon glyphicon-user"></span>'+data.users[i]+'</p>');                           
+                            $('.usersList').append('<p class="userItem" style="display:none"><span class="glyphicon glyphicon-user"></span>'+data.users[i]+'</p>');
+                            $(".userItem" ).fadeIn(200);                          
                             //console.log('USERS=',data.users[i]);
+                            //var userName = '<p class="userItem"><span class="glyphicon glyphicon-user"></span>'+data.users[i]+'</p>';
+                            //$(userName).appendTo('.usersList').fadeIn('slow');
                         }
                         $('#usersCount').text(data.users.length.toString());
                   });
                   io.socket.on('chat', function (data)
                   {
-                      $('.chatbox').append('<div class="message-box"><p id="chat-username"><b>'+data.from+'</b></p><p id="chat-msg">'+data.msg+'</p>');
+                      $('.chatbox').append('<div class="message-box" style="display:none"><p id="chat-username"><b>'+data.from+'</b></p><p id="chat-msg">'+data.msg+'</p>');
+                      $(".message-box" ).fadeIn();
                       //console.log('Event: comment');
                   });
                   io.socket.on('joined', function (data)
                   {
-                      $('.usersList').append('<p class="userItem"><span class="glyphicon glyphicon-user"></span>'+data.name+'</p>');
+                      $('.usersList').append('<p class="userItem" style="display:none"><span class="glyphicon glyphicon-user"></span>'+data.name+'</p>');
+                      $(".userItem" ).fadeIn(200);   
                       $('#usersCount').text(data.users.length.toString());
+                      //var userName = '<p class="userItem"><span class="glyphicon glyphicon-user"></span>'+data.name+'</p>';
+                      //$(userName).appendTo('.usersList').fadeIn('slow');
                   });
                   io.socket.on('leave', function (data)
                   {
-                      $('.userItem:contains('+data.name+')').remove();
+                      $('.userItem:contains('+data.name+')').fadeOut(200, function() {
+                          $('.userItem:contains('+data.name+')').remove();
+                      });  
+                      //
                       $('#usersCount').text(data.users.length.toString());
                   });
+              });
+              io.socket.on('disconnect', function()
+              {
+                  $('.userItem').remove();
+                  console.log('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
               });
           </script>
           <script>
@@ -131,14 +146,6 @@
               socket.on('users', function(msg){
                   var usersCount = parseInt($('#usersCount').text());
                   $('#usersCount').text((msg).toString());
-              });
-          */
-          </script>
-          <script>
-          /*
-              $('#m').keyup(function()
-              {
-                  socket.emit('user typped', "user typped");
               });
           */
           </script>
