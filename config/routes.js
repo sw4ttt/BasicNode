@@ -36,7 +36,8 @@ module.exports.routes = {
     view: 'homepage'
   },
   'get /comment': 'ChatController.comment',
-  'get /join': 'ChatController.joinRoom'
+  'get /join': 'ChatController.joinRoom',
+  'get /room/users':'ChatController.usersRoom'
 
   /***************************************************************************
   *                                                                          *

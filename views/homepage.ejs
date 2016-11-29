@@ -17,24 +17,22 @@
                       <form>
                           <div class="form-group">
                               <div class="row">
-                                  <div class="col-xs-8">
-                                      <textarea readonly class="form-control" rows="20" id="messages" style="background-color:#ffffff; padding-left: 0px;"></textarea>
+                                  <div class="col-xs-7 chatbox">
+                                    <div class="message-box">
+                                        <p id="chat-username">Say</p>
+                                        <p id="chat-msg">Something!</p>
+                                    </div>
                                   </div>
-                                  <div class="col-xs-4" style="overflow:auto; height:415px; padding-left: 0px; border: 1px solid lightgray; border-radius: 5px;" >
-                                      <ul id="usersList" class="list-group">
-                                      </ul>
-                                  </div>
-                              </div>
-                              <div class="row"> 
-                                  <div class="col-xs-12">
-                                      <span id="typping" class="help-block">User typping.</span>
+                                  <div class="col-xs-5" >
+                                    <div class="usersList">
+                                    </div>
                                   </div>
                               </div>
                               <div class="row"> 
-                                  <div class="col-xs-8">                                
-                                      <input type="text" class="form-control" id="m" placeholder="message">
+                                  <div class="col-xs-7 ">                                
+                                      <input type="text" class="form-control inputbox" id="m" placeholder="message" autocomplete="off">
                                   </div>
-                                  <div class="col-xs-4">
+                                  <div class="col-xs-5 sendbox pull-right">
                                       <button type="submit" class="btn btn-default">Send</button>
                                   </div>
                               </div>
@@ -55,11 +53,6 @@
                       {
                           console.log('GET /comment/say Server: DATA:'+data.exit+', StatusCode: '+jwRes.statusCode);
                       });
-                      //socket.emit('chat message', {msg:$('#m').val(),room:'001'});
-                      //socket.broadcast.emit('chat message', "this is a test");
-                      //io.to('001').emit('chat message', $('#m').val());
-                      //io.to('chat message').emit('some event');
-                      //socket.to('001').emit('chat message',$('#m').val());
                       $('#m').val('');
                       //$('#typping').text("User typping.");                    
                   }
@@ -74,16 +67,31 @@
                   {
                         console.log('GET /join Server: DATA:'+data.exit+', StatusCode: '+jwRes.statusCode);
                   });
+                  io.socket.get('/room/users',{room: 'room001'}, function gotResponse(data, jwRes) 
+                  {
+                        //console.log('GET /join Server: DATA:'+data.users);
+                        for (i = 0; i < data.users.length; i++)
+                        {
+                            //$('#usersList').append('<li class="list-group-item">'+data.users[i]+'</li>'); 
+                            $('.usersList').append('<p class="userItem"><span class="glyphicon glyphicon-user"></span>'+data.users[i]+'</p>');                           
+                            //console.log('USERS=',data.users[i]);
+                        }
+                        $('#usersCount').text(data.users.length.toString());
+                  });
                   io.socket.on('chat', function (data)
                   {
-                      $('#messages').append(data.msg+"\n");
-                      console.log('Event: comment => '+data.msg);
+                      $('.chatbox').append('<div class="message-box"><p id="chat-username"><b>'+data.from+'</b></p><p id="chat-msg">'+data.msg+'</p>');
                       //console.log('Event: comment');
                   });
-                  io.socket.on('join', function (data)
+                  io.socket.on('joined', function (data)
                   {
-                      $('#usersList').append('<li class="list-group-item">'+data.name+'</li>');
-                      //console.log('Event: comment');
+                      $('.usersList').append('<p class="userItem"><span class="glyphicon glyphicon-user"></span>'+data.name+'</p>');
+                      $('#usersCount').text(data.users.length.toString());
+                  });
+                  io.socket.on('leave', function (data)
+                  {
+                      $('.userItem:contains('+data.name+')').remove();
+                      $('#usersCount').text(data.users.length.toString());
                   });
               });
           </script>

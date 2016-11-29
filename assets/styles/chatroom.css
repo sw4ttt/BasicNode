@@ -1,0 +1,76 @@
+.message-box 
+{
+    margin-left: 10px;
+    margin-top: 10px;
+    border: 2px solid #b3d9ff;
+    border-radius: 10px 10px;
+    background: #b3d9ff;
+}
+
+.chatbox
+{
+    overflow: auto;
+    overflow-x: hidden;
+    height:415px;
+}
+
+.message-box :nth-child(odd) { 
+    background-color: #F5F5F5;
+    border-radius: 8px 8px;
+    }
+
+.message-box  > #chat-username
+{
+    padding-left: 10px;
+    margin-left: 5px;
+    margin-right: 5px;   
+    margin-top: 5px; 
+}
+.message-box  > #chat-msg
+{
+    padding-left: 30px;  
+}
+
+.userItem
+{
+    background-color: #F5F5F5;
+    border-radius: 8px 8px;
+    margin-top: 5px;
+    margin-left: 5px;
+    margin-right: 5px;  
+    padding-left: 20px; 
+    padding-right: 5px; 
+    height: 20px;
+    padding-top: 10px;
+    padding-bottom: 30px;
+}
+
+.usersList
+{
+    overflow:auto; 
+    height:400px; 
+    border: 2px solid #b3d9ff;
+    border-radius: 10px 10px;
+    background: #b3d9ff;
+    margin-top: 10px;
+}
+
+.inputbox
+{
+    padding-left: 20px !important;
+    padding-right: 0px;
+    margin-top: 20px;
+    margin-right: 0px;  
+    margin-left: 10px;
+    width: 97% !important;
+}
+.sendbox
+{
+    margin-top: 20px;
+    padding-left: 0px;
+    margin-left: 0px;
+}
+
+.panel-body { padding: 0px; }
+
+.panel-heading { background-color: #3399ff !important; color: white !important; }

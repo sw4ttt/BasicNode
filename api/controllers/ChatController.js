@@ -14,14 +14,14 @@ module.exports = {
    */
   comment: function (req, res) 
   {
-      console.log('GET - Comment.');
+      //console.log('GET - Comment.');
       // Make sure this is a socket request (not traditional HTTP)
       if (!req.isSocket) 
       {
           return res.badRequest();
       }
 
-      console.log(req.param('msg'));
+      //console.log(req.param('msg'));
       // Broadcast a notification to all the sockets who have joined
       // the "room001" room, excluding our newly added socket:
       
@@ -40,7 +40,7 @@ module.exports = {
         }
       });
       */
-
+      console.log('Comment with id='+sails.sockets.getId(req));
       sails.sockets.broadcast('room001', 'chat', {from: sails.sockets.getId(req), msg: req.param('msg')});
 
       sails.io.sockets.in('room001').clients(function(error, clients) 
@@ -62,7 +62,7 @@ module.exports = {
    */
   joinRoom: function (req, res) 
   {
-      console.log('GET - Join.');
+      //console.log('GET - Join.');
       // Make sure this is a socket request (not traditional HTTP)
       if (!req.isSocket) 
       {
@@ -75,7 +75,16 @@ module.exports = {
           if (err) {
               return res.serverError(err);
           }
-          sails.sockets.broadcast('room001', 'join', {name: sails.sockets.getId(req)});
+
+          //sails.sockets.broadcast('room001', 'joined', {name: sails.sockets.getId(req)},req);
+          
+          sails.io.sockets.in('room001').clients(function(error, clients)
+          {
+              if (error) throw error;
+              //console.log(clients); // => [PZDoMHjiu8PYfRiKAAAF, Anw2LatarvGVVXEIAAAD]
+              sails.sockets.broadcast('room001', 'joined', {name: sails.sockets.getId(req),users: clients},req);
+          });
+          
           console.log('Joined Room= room001, with id='+sails.sockets.getId(req));
       });
       return res.json({
@@ -101,6 +110,33 @@ module.exports = {
     return res.json({
       todo: 'destroyRoom() is not implemented yet!'
     });
+  },
+  
+  usersRoom: function (req, res) 
+  {
+      sails.io.sockets.in(req.param('room')).clients(function(error, clients)
+      {
+          if (error) throw error;
+          //console.log(clients); // => [PZDoMHjiu8PYfRiKAAAF, Anw2LatarvGVVXEIAAAD]
+          return res.json({
+              users: clients
+          });
+      });
+  },
+  leaveRoom: function (req, res) 
+  {
+    console.log('leaved room='+sails.sockets.getId(req)); 
+
+    sails.io.sockets.in('room001').clients(function(error, clients)
+    {
+        if (error) throw error;
+        //console.log(clients); // => [PZDoMHjiu8PYfRiKAAAF, Anw2LatarvGVVXEIAAAD]
+        sails.sockets.broadcast('room001', 'leave', {name: sails.sockets.getId(req),users: clients},req);
+    });      
+    return res.json({
+            exit: "user leave room"
+    });
   }
+    
 };
 

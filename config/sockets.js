@@ -122,10 +122,19 @@ module.exports.sockets = {
   * disconnects                                                              *
   *                                                                          *
   ***************************************************************************/
-  // afterDisconnect: function(session, socket, cb) {
-  //   // By default: do nothing.
-  //   return cb();
-  // },
+  afterDisconnect: function(session, socket, cb) 
+  {
+    // By default: do nothing.
+    console.log('Socket Disconnected='+sails.sockets.getId(socket)); 
+
+    sails.io.sockets.in('room001').clients(function(error, clients)
+    {
+        if (error) throw error;
+        //console.log(clients); // => [PZDoMHjiu8PYfRiKAAAF, Anw2LatarvGVVXEIAAAD]
+        sails.sockets.broadcast('room001', 'leave', {name: sails.sockets.getId(socket),users: clients});
+    }); 
+    return cb();
+  },
 
   /***************************************************************************
   *                                                                          *
